@@ -1,0 +1,26 @@
+import win.ui;
+/*DSG{{*/
+mainForm = win.form(text="tools";right=757;bottom=467)
+mainForm.add(
+edit={cls="edit";left=47;top=24;right=687;bottom=71;edge=1;multiline=1;z=1};
+static={cls="static";text="Static";left=59;top=106;right=689;bottom=395;transparent=1;z=2}
+)
+/*}}*/
+
+
+import plugins
+var mod = 'default'
+var showList = {}
+
+mainForm.edit.onChange = function(){ 
+	showList = plugins.search(mod, mainForm.edit.text)
+	mainForm.static.text = table.tostring(showList)
+}
+
+mainForm.edit.onOk = function(){
+	if(#showList)
+		plugins.open(mod, showList[1].key)
+}
+
+mainForm.show();
+return win.loopMessage();

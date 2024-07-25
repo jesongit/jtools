@@ -1,0 +1,32 @@
+﻿namespace plugins.default
+import fsys.table
+import process
+import console
+
+var dataMap = fsys.table("/lib/config/default.table")
+dataMap.load()
+
+search = function(keyword){
+	var res = {}
+	for(i=1; #dataMap; 1)
+		if(..string.match(keyword, dataMap[i].pattern) != '')
+			..table.push(res, {'key': i, 'name': dataMap[i].name})
+	return res
+}
+
+open = function(index){
+	if (dataMap[[index]])
+		var cmd = dataMap[index].cmd
+		if(..string.endWith(cmd, ".exe"))
+			process.execute(cmd)
+		elseif(..string.startWith(cmd, "http"))
+			process.execute("microsoft-edge:"+cmd)
+		else
+			process.control(dataMap[index].cmd)
+}
+
+/*
+open(6)
+console.dump(search("bd"))
+execute("pause")
+*/

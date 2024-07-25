@@ -1,0 +1,21 @@
+﻿namespace plugins
+
+// 插件注册列表
+import plugins.default
+var allPlugins = {
+	'default': plugins.default
+}
+
+search = function(mod_name, pattern){
+	return mod(mod_name).search(pattern)
+}
+
+open = function(mod_name, key){
+	mod(mod_name).open(key)
+}
+
+mod = function(mod_name){
+	if(allPlugins[[mod_name]])
+		return allPlugins[[mod_name]]
+	return allPlugins['default']
+}
