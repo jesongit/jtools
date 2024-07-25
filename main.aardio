@@ -25,7 +25,7 @@ mainform.edit.onOk = function(){
 
 mainform.onDropFiles = function(files){
 	dropFile = files[1]
-	var frmChild = mainform.loadForm("\setDefault.aardio");
+	var frmChild = mainform.loadForm("\dlg\setDefault.aardio");
 	var data = frmChild.doModal()
 	plugins.default.setLink(data)
 }
