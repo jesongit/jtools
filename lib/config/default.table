@@ -4,5 +4,5 @@
 [3]={cmd="ms-settings:bluetooth";name="蓝牙";pattern="<ly>?<bluetooth>?<蓝牙>?"};
 [4]={cmd="ms-settings:network-status";name="网络";pattern="<wl>?<network>?<网络>?"};
 [5]={cmd="ms-settings:network-proxy";name="代理";pattern="<dl>?<proxy>?<代理>?"};
-[6]={cmd="https://www.baidu.com";name="百度";pattern="<bd>?<百度>?"}
+[6]={cmd="https://www.baidu.com";name="百度";pattern="<bd>?<百度>?"};
 }

@@ -6,6 +6,7 @@ var allPlugins = {
 	'default': plugins.default
 }
 
+
 search = function(mod_name, pattern){
 	return mod(mod_name).search(pattern)
 }

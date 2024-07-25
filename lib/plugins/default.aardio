@@ -1,5 +1,6 @@
 ﻿namespace plugins.default
 import fsys.table
+import process.control
 import process
 import console
 
@@ -17,13 +18,19 @@ search = function(keyword){
 open = function(index){
 	if (dataMap[[index]])
 		var cmd = dataMap[index].cmd
-		if(..string.endWith(cmd, ".exe"))
-			process.execute(cmd)
+		if(..string.startWith(cmd, "ms-settings:"))
+			process.control(dataMap[index].cmd)
 		elseif(..string.startWith(cmd, "http"))
 			process.execute("microsoft-edge:"+cmd)
 		else
-			process.control(dataMap[index].cmd)
+			process.execute(cmd)
+
 }
+
+setLink = function(data){
+	..table.push(dataMap, data)
+}
+
 
 /*
 open(6)

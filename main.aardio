@@ -1,26 +1,34 @@
 import win.ui;
 /*DSG{{*/
-mainForm = win.form(text="tools";right=757;bottom=467)
-mainForm.add(
+mainform = win.form(text="tools";right=757;bottom=467;acceptfiles=1)
+mainform.add(
 edit={cls="edit";left=47;top=24;right=687;bottom=71;edge=1;multiline=1;z=1};
-static={cls="static";text="Static";left=59;top=106;right=689;bottom=395;transparent=1;z=2}
+static={cls="static";text="Static";left=59;top=106;right=681;bottom=373;transparent=1;z=2}
 )
 /*}}*/
 
-
 import plugins
+import plugins.default
 var mod = 'default'
 var showList = {}
+dropFile = ''
 
-mainForm.edit.onChange = function(){ 
-	showList = plugins.search(mod, mainForm.edit.text)
-	mainForm.static.text = table.tostring(showList)
+mainform.edit.onChange = function(){ 
+	showList = plugins.search(mod, mainform.edit.text)
+	mainform.static.text = table.tostring(showList)
 }
 
-mainForm.edit.onOk = function(){
+mainform.edit.onOk = function(){
 	if(#showList)
 		plugins.open(mod, showList[1].key)
 }
 
-mainForm.show();
+mainform.onDropFiles = function(files){
+	dropFile = files[1]
+	var frmChild = mainform.loadForm("\setDefault.aardio");
+	var data = frmChild.doModal()
+	plugins.default.setLink(data)
+}
+
+mainform.show();
 return win.loopMessage();
