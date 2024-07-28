@@ -7,26 +7,61 @@ edit={cls="edit";left=0;top=0;right=500;bottom=50;autovscroll=false;edge=1;font=
 )
 /*}}*/
 
+import winex
 import plugins
 import console
-var mod = 'default'
-var showList = {}
-dropFile = ''
+import key.hotkey
+import win.ui.menu;
+import win.util.tray;
 
-var listWin = mainForm.custom.loadForm("\dlg\list.aardio")
-var setLink = mainForm.custom.loadForm("\dlg\setLink.aardio")
-mainForm.custom.orphanWindow()
+var trayCfg={
+	[0x205/*_WM_RBUTTONUP*/  ] = function(wParam){
+	    //弹出托盘菜单以前,一定要前置主窗口中,
+	    //避免不点击菜单不会消失，父窗口隐藏也要这样做
+	    win.setForeground(mainForm.hwnd,true) //参数 2 为 true 避免显示最小化窗口
+	     
+		/*
+		下面创建托盘弹出菜单。
+		如果程序要开机启动到托盘，最好在这里创建菜单，在用户点击前不要创建菜单，
+		避免系统启动时 DPI 缩放前创建的菜单字体偏小（出现这情况的机率很小）。
+		如果不想重复创建菜单最好写到一个库里，然后在这里 import 即可避免上述问题。
+		*/
+		mainForm.popmenu = win.ui.popmenu(mainForm);//创建弹出菜单
+/*
+		mainForm.popmenu.add('&open',function(id){ mainForm.show() });
+		mainForm.popmenu.add();//分隔线
+		mainForm.popmenu.add('&hide',function(id){ mainForm.show(false) });
+		mainForm.popmenu.add();//分隔线
+*/
+		mainForm.popmenu.add('&exit',function(id){ mainForm.close() })
+	    		
+	    mainForm.popmenu.popup();
+	    mainForm.popmenu.close();
+	};
+	[0x202/*_WM_LBUTTONUP*/] = function(wParam){ 
+		showMain()
+	};
+	[0x203/*_WM_LBUTTONDBLCLK*/] = function(wParam){ 
+		
+	};
+	[0x404/*_PARAM_DESTROY*/] = function(wParam){
+		
+	};
+	[0x405/*_PARAM_CLICKED*/] = function(wParam){
+		
+	};
+}
 
 // 根据文本框变化调用对应接口
 mainForm.edit.onChange = function(){
-	if(mainForm.edit.text == "")
+	var text = string.trim(mainForm.edit.text)
+	if(text == "")
 		return closeSubWin()
-	showList = plugins.search(mod, mainForm.edit.text)
+	showList = plugins.search(mod, text)
 	console.dump("data:", showList)
 	showSubWin(listWin)
 	mainForm.edit.setFocus()
 }
-
 
 // 按下回车的操作
 mainForm.edit.onOk = function(){
@@ -34,7 +69,6 @@ mainForm.edit.onOk = function(){
 		plugins.open(mod, showList[1].key)
 	return true
 }
-
 
 // 按下 Esc 的操作
 mainForm.edit.onCancel = function(){
@@ -47,8 +81,17 @@ mainForm.edit.onCancel = function(){
 
 // 拖入文件后的操作
 mainForm.onDropFiles = function(files){
+	setLink.setPath(files[1])
 	showSubWin(setLink)
 }
+
+// 打开主界面
+showMain = function(flag=true){
+	mainForm.show(flag)
+	if(flag)
+		mainForm.edit.setFocus()
+}
+
 
 // 显示子窗口
 showSubWin = function(subWin){
@@ -61,5 +104,28 @@ closeSubWin = function(){
 	mainForm.custom.show(false)
 }
 
-mainForm.show();
+// 显示/隐藏窗口
+switchMain = function(...){
+    showMain(!winex.isVisible(mainForm.hwnd))
+} 
+
+var mod = 'default'
+var showList = {}
+var superHotkey = key.hotkey(mainForm) //创建超级热键,必须用于窗口程序中
+console.log("test")
+
+// 载入可能用到的子窗口
+var listWin = mainForm.custom.loadForm("\dlg\list.aardio")
+var setLink = mainForm.custom.loadForm("\dlg\setLink.aardio")
+mainForm.custom.orphanWindow()	// 设置为悬浮窗口
+
+// 热键
+superHotkey.reg("ALT","SPACE", switchMain)
+
+// 托盘图标
+mainForm.tray = win.util.tray(mainForm)
+mainForm.tray.tip = "jtools" //设置鼠标提示
+mainForm.onTrayMessage = trayCfg
+
+showMain()
 return win.loopMessage();

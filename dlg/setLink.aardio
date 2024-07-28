@@ -54,6 +54,16 @@ winform.name.onChange = function(){
 	winform.static.text = "显示名称：" ++ winform.name.text ++ "\n路径：" ++ path
 }
 
+winform.static.wndproc = function(hwnd,message,wParam,lParam){
+	if(message == 0x400/*_WM_USER*/)
+		console.log(wParam, lParam)
+}
+
+setPath = function(path){
+	this.path = path
+}
+
+
 winform.show();
 win.loopMessage();
 return winform;

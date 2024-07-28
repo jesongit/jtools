@@ -3,7 +3,7 @@
 	<file name="main.aardio" path="main.aardio" comment="main.aardio"/>
 	<folder name="资源文件" path="res" embed="true" local="false" ignored="false"/>
 	<folder name="窗体文件" path="dlg" comment="目录" embed="true" local="false" ignored="false">
-		<file name="setDefault.aardio" path="dlg\setDefault.aardio" comment="dlg\setDefault.aardio"/>
+		<file name="setLink.aardio" path="dlg\setLink.aardio" comment="dlg\setDefault.aardio"/>
 		<file name="list.aardio" path="dlg\list.aardio" comment="dlg\list.aardio"/>
 	</folder>
 </project>
