@@ -1,0 +1,19 @@
+import win.ui;
+/*DSG{{*/
+var winform = win.form(text="aardio form";right=499;bottom=349;border="none")
+winform.add(
+listbox={cls="listbox";left=0;top=0;right=500;bottom=350;font=LOGFONT(h=-35);integralHeight=0;items={"1";"2";"3";"4";"5";"6";"7";"8";"9";"1";"1";"1";"1";"1";"1"};vscroll=1;z=1}
+)
+/*}}*/
+
+addItems = function(showList){
+	winform.listbox.clear()
+	console.dump("data1:", showList)
+	for(_, v in showList) {
+		winform.listbox.add(v["name"])
+	}
+}
+
+winform.show();
+win.loopMessage();
+return winform;

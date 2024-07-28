@@ -1,0 +1,59 @@
+import win.ui;
+/*DSG{{*/
+var winform = win.form(text="aardio form";right=499;bottom=349;border="none")
+winform.add(
+cancel={cls="button";text="取消";left=400;top=30;right=470;bottom=60;z=5};
+confirm={cls="button";text="确认";left=310;top=30;right=380;bottom=60;z=4};
+listbox={cls="listbox";left=30;top=180;right=130;bottom=330;border=1;items={};z=7};
+name={cls="edit";text="显示名称";left=30;top=30;right=290;bottom=60;border=1;z=2};
+pattern={cls="edit";text="test";left=30;top=80;right=470;bottom=110;border=1;z=3};
+static={cls="static";left=160;top=180;right=470;bottom=330;align="center";center=1;font=LOGFONT(h=-14);notify=1;transparent=1;z=6};
+tips={cls="static";text="索引使用英文逗号分隔 注意最下方显示预览索引是否正确";left=30;top=130;right=470;bottom=160;align="center";font=LOGFONT(h=-14);notify=1;transparent=1;z=1}
+)
+/*}}*/
+
+import plugins.default
+var patternList = {}
+var path = "测试路径"
+
+// 确认
+winform.confirm.oncommand = function(id,event){
+	if(winform.pattern.text == "")
+		return winform.pattern.showWarningTip(,"必须填写搜索索引")
+	if(string.len(winform.name.text) > 5)
+		return winform.name.showWarningTip(,"名字过长")
+	if(string.len(winform.name.text) == "")
+		return winform.name.showWarningTip(,"名字不能为空")
+	var pattern = ""
+	for(_, v in patternList)
+		pattern += "<" ++ v ++ ">?"
+		
+	plugins.default.setLink({
+		cmd=path;
+		name=winform.name.text;
+		pattern=pattern;
+	})
+}
+
+// 索引变化
+winform.pattern.onChange = function(){
+	patternList = string.split(winform.pattern.text, ",")
+	winform.listbox.clear()
+	for(_, inx in patternList) {
+		winform.listbox.add(inx)
+	}
+}
+
+// 取消
+winform.cancel.oncommand = function(id,event){
+	winform.endModal()
+}
+
+// 名称变化
+winform.name.onChange = function(){
+	winform.static.text = "显示名称：" ++ winform.name.text ++ "\n路径：" ++ path
+}
+
+winform.show();
+win.loopMessage();
+return winform;

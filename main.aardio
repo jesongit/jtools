@@ -1,34 +1,65 @@
 import win.ui;
 /*DSG{{*/
-mainform = win.form(text="tools";right=757;bottom=467;acceptfiles=1)
-mainform.add(
-edit={cls="edit";left=47;top=24;right=687;bottom=71;edge=1;multiline=1;z=1};
-static={cls="static";text="Static";left=59;top=106;right=681;bottom=373;transparent=1;z=2}
+mainForm = win.form(text="jtools";right=499;bottom=49;acceptfiles=1;border="none";exmode="toolwindow")
+mainForm.add(
+custom={cls="custom";text="自定义控件";left=0;top=50;right=500;bottom=400;hide=1;repeat="center";z=2};
+edit={cls="edit";left=0;top=0;right=500;bottom=50;autovscroll=false;edge=1;font=LOGFONT(h=-35);z=1}
 )
 /*}}*/
 
 import plugins
-import plugins.default
+import console
 var mod = 'default'
 var showList = {}
 dropFile = ''
 
-mainform.edit.onChange = function(){ 
-	showList = plugins.search(mod, mainform.edit.text)
-	mainform.static.text = table.tostring(showList)
+var listWin = mainForm.custom.loadForm("\dlg\list.aardio")
+var setLink = mainForm.custom.loadForm("\dlg\setLink.aardio")
+mainForm.custom.orphanWindow()
+
+// 根据文本框变化调用对应接口
+mainForm.edit.onChange = function(){
+	if(mainForm.edit.text == "")
+		return closeSubWin()
+	showList = plugins.search(mod, mainForm.edit.text)
+	console.dump("data:", showList)
+	showSubWin(listWin)
+	mainForm.edit.setFocus()
 }
 
-mainform.edit.onOk = function(){
+
+// 按下回车的操作
+mainForm.edit.onOk = function(){
 	if(#showList)
 		plugins.open(mod, showList[1].key)
+	return true
 }
 
-mainform.onDropFiles = function(files){
-	dropFile = files[1]
-	var frmChild = mainform.loadForm("\dlg\setDefault.aardio");
-	var data = frmChild.doModal()
-	plugins.default.setLink(data)
+
+// 按下 Esc 的操作
+mainForm.edit.onCancel = function(){
+	if(mainForm.edit.text == '')
+		win.quitMessage()
+	else
+		mainForm.edit.text = ''
+	return true
 }
 
-mainform.show();
+// 拖入文件后的操作
+mainForm.onDropFiles = function(files){
+	showSubWin(setLink)
+}
+
+// 显示子窗口
+showSubWin = function(subWin){
+	subWin.show()
+	mainForm.custom.show()
+}
+
+// 关闭子窗口
+closeSubWin = function(){
+	mainForm.custom.show(false)
+}
+
+mainForm.show();
 return win.loopMessage();
