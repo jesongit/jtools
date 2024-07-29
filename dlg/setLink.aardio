@@ -5,8 +5,9 @@ winform.add(
 cancel={cls="button";text="取消";left=400;top=30;right=470;bottom=60;z=5};
 confirm={cls="button";text="确认";left=310;top=30;right=380;bottom=60;z=4};
 listbox={cls="listbox";left=30;top=180;right=130;bottom=330;border=1;items={};z=7};
-name={cls="edit";text="显示名称";left=30;top=30;right=290;bottom=60;border=1;z=2};
-pattern={cls="edit";text="test";left=30;top=80;right=470;bottom=110;border=1;z=3};
+name={cls="edit";text="名称";left=30;top=30;right=150;bottom=60;border=1;z=2};
+path={cls="edit";text="文件路径";left=30;top=80;right=470;bottom=110;border=1;z=3};
+pattern={cls="edit";text="索引";left=170;top=30;right=290;bottom=60;border=1;z=8};
 static={cls="static";left=160;top=180;right=470;bottom=330;align="center";center=1;font=LOGFONT(h=-14);notify=1;transparent=1;z=6};
 tips={cls="static";text="索引使用英文逗号分隔 注意最下方显示预览索引是否正确";left=30;top=130;right=470;bottom=160;align="center";font=LOGFONT(h=-14);notify=1;transparent=1;z=1}
 )
@@ -14,12 +15,11 @@ tips={cls="static";text="索引使用英文逗号分隔 注意最下方显示预
 
 import plugins.default
 var patternList = {}
-var path = "测试路径"
 
 // 确认
 winform.confirm.oncommand = function(id,event){
-	if(winform.pattern.text == "")
-		return winform.pattern.showWarningTip(,"必须填写搜索索引")
+	if(winform.path.text == "")
+		return winform.path.showWarningTip(,"必须填写搜索索引")
 	if(string.len(winform.name.text) > 5)
 		return winform.name.showWarningTip(,"名字过长")
 	if(string.len(winform.name.text) == "")
@@ -50,17 +50,16 @@ winform.cancel.oncommand = function(id,event){
 }
 
 // 名称变化
-winform.name.onChange = function(){
-	winform.static.text = "显示名称：" ++ winform.name.text ++ "\n路径：" ++ path
+winform.name.onChange = nameChange
+
+winform.onDropFiles = function(files){
+	winform.path.text = files[1]
+	nameChange()
+	winform.name.setFocus()
 }
 
-winform.static.wndproc = function(hwnd,message,wParam,lParam){
-	if(message == 0x400/*_WM_USER*/)
-		console.log(wParam, lParam)
-}
-
-setPath = function(path){
-	this.path = path
+nameChange = function(){
+	winform.static.text = "显示名称：" ++ winform.name.text ++ "\n路径：" ++ winform.path.text
 }
 
 

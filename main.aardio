@@ -2,7 +2,7 @@ import win.ui;
 /*DSG{{*/
 mainForm = win.form(text="jtools";right=499;bottom=49;acceptfiles=1;border="none";exmode="toolwindow")
 mainForm.add(
-custom={cls="custom";text="自定义控件";left=0;top=50;right=500;bottom=400;hide=1;repeat="center";z=2};
+custom={cls="custom";text="自定义控件";left=0;top=50;right=500;bottom=400;acceptfiles=1;hide=1;repeat="center";z=2};
 edit={cls="edit";left=0;top=0;right=500;bottom=50;autovscroll=false;edge=1;font=LOGFONT(h=-35);z=1}
 )
 /*}}*/
@@ -52,11 +52,29 @@ var trayCfg={
 	};
 }
 
+var mod = 'default'
+var showList = {}
+var superHotkey = key.hotkey(mainForm) //创建超级热键,必须用于窗口程序中
+console.log("test")
+
+// 载入可能用到的子窗口
+var listWin = mainForm.custom.loadForm("\dlg\list.aardio")
+var setLink = mainForm.custom.loadForm("\dlg\setLink.aardio")
+mainForm.custom.orphanWindow()	// 设置为悬浮窗口
+
+// 热键
+superHotkey.reg("ALT","SPACE", switchMain)
+
+// 托盘图标
+mainForm.tray = win.util.tray(mainForm)
+mainForm.tray.tip = "jtools" //设置鼠标提示
+mainForm.onTrayMessage = trayCfg
+
 // 根据文本框变化调用对应接口
 mainForm.edit.onChange = function(){
 	var text = string.trim(mainForm.edit.text)
 	if(text == "")
-		return closeSubWin()
+		return hideSubWin()
 	showList = plugins.search(mod, text)
 	console.dump("data:", showList)
 	showSubWin(listWin)
@@ -75,14 +93,18 @@ mainForm.edit.onCancel = function(){
 	if(mainForm.edit.text == '')
 		win.quitMessage()
 	else
+		hideSubWin()
 		mainForm.edit.text = ''
 	return true
 }
 
 // 拖入文件后的操作
-mainForm.onDropFiles = function(files){
-	setLink.setPath(files[1])
-	showSubWin(setLink)
+mainForm.wndproc = function(hwnd,message,wParam,lParam){ 
+	if(message==0x233/*_WM_DROPFILES*/){
+		// 转发到子窗口
+		::User32.PostMessage(setLink.hwnd, message, wParam, lParam)
+		showSubWin(setLink)
+	}
 }
 
 // 打开主界面
@@ -92,7 +114,6 @@ showMain = function(flag=true){
 		mainForm.edit.setFocus()
 }
 
-
 // 显示子窗口
 showSubWin = function(subWin){
 	subWin.show()
@@ -100,7 +121,7 @@ showSubWin = function(subWin){
 }
 
 // 关闭子窗口
-closeSubWin = function(){
+hideSubWin = function(){
 	mainForm.custom.show(false)
 }
 
@@ -108,24 +129,6 @@ closeSubWin = function(){
 switchMain = function(...){
     showMain(!winex.isVisible(mainForm.hwnd))
 } 
-
-var mod = 'default'
-var showList = {}
-var superHotkey = key.hotkey(mainForm) //创建超级热键,必须用于窗口程序中
-console.log("test")
-
-// 载入可能用到的子窗口
-var listWin = mainForm.custom.loadForm("\dlg\list.aardio")
-var setLink = mainForm.custom.loadForm("\dlg\setLink.aardio")
-mainForm.custom.orphanWindow()	// 设置为悬浮窗口
-
-// 热键
-superHotkey.reg("ALT","SPACE", switchMain)
-
-// 托盘图标
-mainForm.tray = win.util.tray(mainForm)
-mainForm.tray.tip = "jtools" //设置鼠标提示
-mainForm.onTrayMessage = trayCfg
 
 showMain()
 return win.loopMessage();
