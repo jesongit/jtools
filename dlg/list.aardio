@@ -14,6 +14,13 @@ addItems = function(showList){
 	}
 }
 
+winform.wndproc = {
+	[0x202/*_WM_LBUTTONUP*/] = function(hwnd,message,wParam,lParam){ 
+		var x,y = win.getMessagePos(lParam);
+		io.print("左键按下",x,y)
+	}
+}
+
 winform.show();
 win.loopMessage();
 return winform;

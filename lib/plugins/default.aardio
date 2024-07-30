@@ -4,27 +4,19 @@ import process.control
 import process
 import console
 
-var dataMap = fsys.table("/lib/config/default.table")
+var dataMap = fsys.table("/lib/config/link.table")
 dataMap.load()
 
 search = function(keyword){
 	var res = {}
 	for(i=1; #dataMap; 1)
 		if(..string.match(keyword, dataMap[i].pattern) != '')
-			..table.push(res, {'key': i, 'name': dataMap[i].name})
+			..table.push(res, dataMap[i])
 	return res
 }
 
-open = function(index){
-	if (dataMap[[index]])
-		var cmd = dataMap[index].cmd
-		if(..string.startWith(cmd, "ms-settings:"))
-			process.control(dataMap[index].cmd)
-		elseif(..string.startWith(cmd, "http"))
-			process.execute("microsoft-edge:"+cmd)
-		else
-			process.execute(cmd)
-
+open = function(data){
+	process.execute(data.cmd)
 }
 
 setLink = function(data){

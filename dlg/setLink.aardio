@@ -1,6 +1,6 @@
 import win.ui;
 /*DSG{{*/
-var winform = win.form(text="aardio form";right=499;bottom=349;border="none")
+var winform = win.form(text="aardio form";right=499;bottom=349;border="thin";max=false;min=false;sysmenu=1)
 winform.add(
 cancel={cls="button";text="取消";left=400;top=30;right=470;bottom=60;z=5};
 confirm={cls="button";text="确认";left=310;top=30;right=380;bottom=60;z=4};
@@ -19,7 +19,7 @@ var patternList = {}
 // 确认
 winform.confirm.oncommand = function(id,event){
 	if(winform.path.text == "")
-		return winform.path.showWarningTip(,"必须填写搜索索引")
+		return winform.pattern.showWarningTip(,"必须填写搜索索引")
 	if(string.len(winform.name.text) > 5)
 		return winform.name.showWarningTip(,"名字过长")
 	if(string.len(winform.name.text) == "")
@@ -29,7 +29,7 @@ winform.confirm.oncommand = function(id,event){
 		pattern += "<" ++ v ++ ">?"
 		
 	plugins.default.setLink({
-		cmd=path;
+		cmd=winform.path.text;
 		name=winform.name.text;
 		pattern=pattern;
 	})
@@ -62,7 +62,8 @@ nameChange = function(){
 	winform.static.text = "显示名称：" ++ winform.name.text ++ "\n路径：" ++ winform.path.text
 }
 
-
-winform.show();
+if(!winform.parent) {
+	winform.show();
+}
 win.loopMessage();
 return winform;
