@@ -1,6 +1,6 @@
 import win.ui;
 /*DSG{{*/
-var winform = win.form(text="aardio form";right=499;bottom=349;border="thin";max=false;min=false;sysmenu=1)
+var winform = win.form(text="aardio form";right=499;bottom=349;border="thin";max=false;min=false)
 winform.add(
 cancel={cls="button";text="取消";left=400;top=30;right=470;bottom=60;z=5};
 confirm={cls="button";text="确认";left=310;top=30;right=380;bottom=60;z=4};
@@ -51,12 +51,6 @@ winform.cancel.oncommand = function(id,event){
 
 // 名称变化
 winform.name.onChange = nameChange
-
-winform.onDropFiles = function(files){
-	winform.path.text = files[1]
-	nameChange()
-	winform.name.setFocus()
-}
 
 nameChange = function(){
 	winform.static.text = "显示名称：" ++ winform.name.text ++ "\n路径：" ++ winform.path.text

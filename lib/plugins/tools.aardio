@@ -1,0 +1,21 @@
+﻿namespace plugins.tools;
+
+import fsys.lnk
+import string.conv
+import string.conv.pinyin
+
+
+toAlias = function(name){
+	var alias = ""
+	for(_, s in (string.split(name))){
+		if(string.conv.isGb2312(s))
+			alias += string.split(string.conv.pinyin(s))[1]
+		else
+			alias += s
+	}
+	return alias
+}
+
+searchLnk = function(name){
+	return fsys.lnk.search(, name)
+}

@@ -1,26 +1,64 @@
 ﻿namespace plugins.default
+import plugins.tools
+import sys.installed
 import fsys.table
-import process.control
 import process
 import console
 
-var dataMap = fsys.table("/lib/config/link.table")
-dataMap.load()
+var keys = fsys.table("/lib/config/keys.table")
+var skip = fsys.table("/lib/config/skip.table")
+keys.load()
+skip.load()
 
-search = function(keyword){
+search = function(word){
+	word = ..string.lower(word)
 	var res = {}
-	for(i=1; #dataMap; 1)
-		if(..string.match(keyword, dataMap[i].pattern) != '')
-			..table.push(res, dataMap[i])
+	for(key, data in keys) {
+		key = ..string.lower(key)
+		if(..string.indexOf(key, word))
+			..table.push(res, data)
+	}
 	return res
 }
 
 open = function(data){
-	process.execute(data.cmd)
+	process.execute(data.path)
 }
 
-setLink = function(data){
-	..table.push(dataMap, data)
+setLnk = function(name, path, alias){
+	alias = alias ? alias : plugins.tools.toAlias(name)
+	console.log(alias, name, path)
+	keys[alias] = {name=name, path=path}
+	return keys[alias]
+}
+
+addLnk = function(name){
+	var alias = plugins.tools.toAlias(name)
+	if(keys[[alias]])
+		return keys[[alias]]
+	var path = plugins.tools.searchLnk(name)
+	if(path)
+		return setLnk(name, path, alias)
+}
+
+var software = {"微信", "QQ", "网易云音乐", "Todesk", "英雄联盟", "Steam", "Terminus Player"}
+
+// 加载快捷方式 先加载MSI安装的软件 。再加载常用软件
+for(_, install in (sys.installed.programs())) {
+	if(install[["InstallLocation"]] == "")
+		continue
+	var name = install.DisplayName
+	if(skip[[name]]) continue
+	var alias = plugins.tools.toAlias(name)
+	if(keys[[alias]]) continue
+	var path = plugins.tools.searchLnk(name)
+	if(path)
+		setLnk(name, path, alias)
+	else
+		skip[name] = true
+}
+for(_, name in software){
+	addLnk(name)
 }
 
 
